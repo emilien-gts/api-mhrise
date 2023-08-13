@@ -56,11 +56,16 @@ sf: ## List all Symfony commands or pass the parameter "c=" to run a given comma
 cc: c=c:c ## Clear the cache
 cc: sf
 
+db-drop:
+	@$(SYMFONY) doctrine:database:drop --force
+
 db-create: ##  Create database
 	@$(SYMFONY) doctrine:database:create --if-not-exists
 
 db-update: ## Update database
 	@$(SYMFONY) doctrine:schema:update --complete --dump-sql  --force
+
+db-reset: db-drop db-create db-update validate-schema
 
 validate-schema: ## Valid doctrine mapping
 	@$(SYMFONY) doctrine:schema:validate --skip-sync

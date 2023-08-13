@@ -1,7 +1,10 @@
 parameters:
 	level: 9
-	ignoreErrors:
-#	    - '#value type specified in iterable type#'
 	paths:
 		- src
 		- tests
+
+	# Erros to ignore
+	ignoreErrors:
+	    - '#value type specified in iterable type#'
+	checkGenericClassInNonGenericObjectType: false
