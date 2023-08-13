@@ -23,6 +23,12 @@ class Monster
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     public ?bool $isLarge = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    public ?string $description = null;
+
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    public ?int $dangerLevel = null;
+
     /**
      * @var ArrayCollection<int, Referential>
      */

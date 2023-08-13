@@ -80,6 +80,10 @@ class MonsterSynchronizer extends AbstractSynchronizer
         $m->name = $data['name'];
         $m->isLarge = $data['isLarge'] ?? null;
 
+        $mhRiseData = $this->getRiseData($data);
+        $m->description = $mhRiseData['info'] ?? null;
+        $m->dangerLevel = isset($mhRiseData['danger']) ? (int) $mhRiseData['danger'] : null;
+
         $this->syncReferentialItem($data['type'] ?? [], $m, 'findMonsterType', 'createMonsterType');
         $this->syncReferentialList($data['elements'] ?? [], $m, 'findElement', 'createElement');
         $this->syncReferentialList($data['ailments'] ?? [], $m, 'findAilment', 'createAilment');
@@ -93,6 +97,13 @@ class MonsterSynchronizer extends AbstractSynchronizer
 
         $this->_monsters[$m->name] = $m;
         $this->em->persist($m);
+    }
+
+    private function getRiseData(array $data): array
+    {
+        $mhRiseData = \array_values(\array_filter($data['games'] ?? [], fn (array $data) => isset($data['game']) && self::MHRISE_GAME_NAME === $data['game']));
+
+        return $mhRiseData[0] ?? [];
     }
 
     private function syncSubSpecies(): void
