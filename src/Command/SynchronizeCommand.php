@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Synchronizer\ItemSynchronizer;
 use App\Synchronizer\MonsterSynchronizer;
 use App\Synchronizer\QuestSynchronizer;
 use Psr\Log\LoggerInterface;
@@ -18,16 +19,28 @@ class SynchronizeCommand extends Command
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly MonsterSynchronizer $monsterSynchronizer,
-        private readonly QuestSynchronizer $questSynchronizer
+        private readonly QuestSynchronizer $questSynchronizer,
+        private readonly ItemSynchronizer $itemSynchronizer
     ) {
         parent::__construct(self::COMMAND_NAME);
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $output->setVerbosity(OutputInterface::VERBOSITY_DEBUG);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
+            $this->logger->notice('>>> Import monsters');
             $this->monsterSynchronizer->sync();
+
+            $this->logger->notice('>>> Import quests');
             $this->questSynchronizer->sync();
+
+            $this->logger->notice('>>> Import items');
+            $this->itemSynchronizer->sync();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
 

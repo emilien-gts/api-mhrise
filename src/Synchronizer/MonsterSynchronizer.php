@@ -40,13 +40,11 @@ class MonsterSynchronizer extends AbstractSynchronizer
         $this->helper->cleanEntity(Monster::class);
 
         $this->openJson(self::JSON_NAME, 'monsters');
+
         $this->syncMainSpecies();
         $this->syncSubSpecies();
 
-        $this->em->flush();
-        $this->em->clear();
-
-        $this->reader->close();
+        $this->saveAndclose();
     }
 
     /**
@@ -83,7 +81,7 @@ class MonsterSynchronizer extends AbstractSynchronizer
         $m->description = $mhRiseData['info'] ?? null;
         $m->dangerLevel = isset($mhRiseData['danger']) ? (int) $mhRiseData['danger'] : null;
 
-        $this->syncReferentialItem($data['type'] ?? [], $m, 'findMonsterType', 'createMonsterType');
+        $this->syncReferentialItem($data['type'], $m, 'findMonsterType', 'createMonsterType');
         $this->syncReferentialList($data['elements'] ?? [], $m, 'findElement', 'createElement');
         $this->syncReferentialList($data['ailments'] ?? [], $m, 'findAilment', 'createAilment');
         $this->syncReferentialList($data['weakness'] ?? [], $m, 'findWeakness', 'createElement');

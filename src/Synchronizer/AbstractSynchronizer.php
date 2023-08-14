@@ -17,12 +17,14 @@ abstract class AbstractSynchronizer
 {
     public const MHRISE_GAME_NAME = 'Monster Hunter Rise';
 
+    public array $_referentials = [];
+
     public function __construct(
         protected readonly JsonReader $reader,
         protected readonly EntityManagerInterface $em,
         protected readonly SynchronizerHelper $helper,
-        private readonly ReferentialRepository $referentialRepository,
-        private readonly ReferentialFactory $referentialFactory,
+        protected readonly ReferentialRepository $referentialRepository,
+        protected readonly ReferentialFactory $referentialFactory,
         private readonly KernelInterface $kernel
     ) {
     }
@@ -55,8 +57,11 @@ abstract class AbstractSynchronizer
 
     protected function syncReferentialItem(string $item, object $object, string $repositoryMethod, string $factoryMethod): void
     {
-        $element = $this->referentialRepository->{$repositoryMethod}($item);
+        $element = $this->_referentials[$item] ?? null;
         $element = $element ?? $this->referentialFactory->{$factoryMethod}($item);
+        if (!isset($this->_referentials[$item])) {
+            $this->_referentials[$item] = $element;
+        }
 
         if ('findAilment' === $repositoryMethod && \is_a($object, Monster::class)) {
             $object->ailments->add($element);
@@ -73,5 +78,12 @@ abstract class AbstractSynchronizer
         } elseif ('findQuestType' === $repositoryMethod && \is_a($object, Quest::class)) {
             $object->type = $element;
         }
+    }
+
+    protected function saveAndClose(): void
+    {
+        $this->em->flush();
+        $this->em->clear();
+        $this->reader->close();
     }
 }

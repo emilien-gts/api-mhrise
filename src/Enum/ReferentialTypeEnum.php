@@ -10,4 +10,5 @@ enum ReferentialTypeEnum: string
     case QUEST_CLIENT = 'quest_client';
     case MAP = 'map';
     case QUEST_TYPE = 'quest_type';
+    case ITEM_TYPE = 'item_type';
 }

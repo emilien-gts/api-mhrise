@@ -12,7 +12,11 @@ class QuestSynchronizer extends AbstractSynchronizer
     public function sync(): void
     {
         $this->helper->cleanEntity(Quest::class);
+        $this->syncQuests();
+    }
 
+    private function syncQuests(): void
+    {
         $this->openJson(self::JSON_NAME, 'quests');
         $depth = $this->reader->depth();
         $this->reader->read();
@@ -25,10 +29,7 @@ class QuestSynchronizer extends AbstractSynchronizer
             }
         } while ($this->reader->next() && $this->reader->depth() > $depth);
 
-        $this->em->flush();
-        $this->em->clear();
-
-        $this->reader->close();
+        $this->saveAndclose();
     }
 
     private function supportsQuest(array $data): bool

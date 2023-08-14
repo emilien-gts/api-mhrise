@@ -21,6 +21,9 @@ class Referential
     #[ORM\Column(type: Types::STRING)]
     public string $libelle;
 
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    public ?int $value = null;
+
     public function __construct(ReferentialTypeEnum $type, string $libelle)
     {
         $this->type = $type;

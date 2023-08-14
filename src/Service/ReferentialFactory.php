@@ -36,4 +36,12 @@ class ReferentialFactory
     {
         return new Referential(ReferentialTypeEnum::QUEST_TYPE, $libelle);
     }
+
+    public function createItemType(string $libelle, ?int $value): Referential
+    {
+        $referential = new Referential(ReferentialTypeEnum::ITEM_TYPE, $libelle);
+        $referential->value = $value;
+
+        return $referential;
+    }
 }

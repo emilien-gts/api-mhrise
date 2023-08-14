@@ -20,6 +20,14 @@ class ReferentialRepository extends ServiceEntityRepository
         parent::__construct($registry, Referential::class);
     }
 
+    /**
+     * @return array<int, Referential>
+     */
+    public function findMonstersTypes(): array
+    {
+        return $this->findBy(['type' => ReferentialTypeEnum::MONSTER_TYPE]);
+    }
+
     public function findMonsterType(string $libelle): ?Referential
     {
         return $this->findOneByTypeAndLibelle(ReferentialTypeEnum::MONSTER_TYPE, $libelle);
@@ -53,6 +61,14 @@ class ReferentialRepository extends ServiceEntityRepository
     public function findAilment(string $libelle): ?Referential
     {
         return $this->findOneByTypeAndLibelle(ReferentialTypeEnum::AILMENT, $libelle);
+    }
+
+    public function findOneItemTypeByValue(int $value): ?Referential
+    {
+        return $this->findOneBy([
+            'type' => ReferentialTypeEnum::ITEM_TYPE,
+            'value' => $value,
+        ]);
     }
 
     private function findOneByTypeAndLibelle(ReferentialTypeEnum $type, string $libelle): ?Referential
