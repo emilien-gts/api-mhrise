@@ -21,4 +21,19 @@ class ReferentialFactory
     {
         return new Referential(ReferentialTypeEnum::AILMENT, $libelle);
     }
+
+    public function createQuestClient(string $libelle): Referential
+    {
+        return new Referential(ReferentialTypeEnum::QUEST_CLIENT, $libelle);
+    }
+
+    public function createMap(string $libelle): Referential
+    {
+        return new Referential(ReferentialTypeEnum::MAP, $libelle);
+    }
+
+    public function createQuestType(string $libelle): Referential
+    {
+        return new Referential(ReferentialTypeEnum::QUEST_TYPE, $libelle);
+    }
 }

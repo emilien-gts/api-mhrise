@@ -3,7 +3,6 @@
 namespace App\Synchronizer;
 
 use App\Entity\Monster;
-use App\Entity\Referential;
 use App\Repository\ReferentialRepository;
 use App\Service\ReferentialFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class MonsterSynchronizer extends AbstractSynchronizer
 {
-    public const MHRISE_GAME_NAME = 'Monster Hunter Rise';
     public const JSON_NAME = 'monsters.json';
 
     private array $_monsters = [];
@@ -39,7 +37,6 @@ class MonsterSynchronizer extends AbstractSynchronizer
      */
     public function sync(): void
     {
-        $this->helper->cleanEntity(Referential::class);
         $this->helper->cleanEntity(Monster::class);
 
         $this->openJson(self::JSON_NAME, 'monsters');
@@ -47,6 +44,8 @@ class MonsterSynchronizer extends AbstractSynchronizer
         $this->syncSubSpecies();
 
         $this->em->flush();
+        $this->em->clear();
+
         $this->reader->close();
     }
 

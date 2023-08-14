@@ -35,6 +35,21 @@ class ReferentialRepository extends ServiceEntityRepository
         return $this->findElement($libelle);
     }
 
+    public function findQuestClient(string $libelle): ?Referential
+    {
+        return $this->findOneByTypeAndLibelle(ReferentialTypeEnum::QUEST_CLIENT, $libelle);
+    }
+
+    public function findMap(string $libelle): ?Referential
+    {
+        return $this->findOneByTypeAndLibelle(ReferentialTypeEnum::MAP, $libelle);
+    }
+
+    public function findQuestType(string $libelle): ?Referential
+    {
+        return $this->findOneByTypeAndLibelle(ReferentialTypeEnum::QUEST_TYPE, $libelle);
+    }
+
     public function findAilment(string $libelle): ?Referential
     {
         return $this->findOneByTypeAndLibelle(ReferentialTypeEnum::AILMENT, $libelle);

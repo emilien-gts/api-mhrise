@@ -3,6 +3,7 @@
 namespace App\Synchronizer;
 
 use App\Entity\Monster;
+use App\Entity\Quest;
 use App\Repository\ReferentialRepository;
 use App\Service\ReferentialFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class AbstractSynchronizer
 {
+    public const MHRISE_GAME_NAME = 'Monster Hunter Rise';
+
     public function __construct(
         protected readonly JsonReader $reader,
         protected readonly EntityManagerInterface $em,
@@ -62,6 +65,12 @@ abstract class AbstractSynchronizer
         } elseif ('findWeakness' === $repositoryMethod && \is_a($object, Monster::class)) {
             $object->weakness->add($element);
         } elseif ('findMonsterType' === $repositoryMethod && \is_a($object, Monster::class)) {
+            $object->type = $element;
+        } elseif ('findQuestClient' === $repositoryMethod && \is_a($object, Quest::class)) {
+            $object->client = $element;
+        } elseif ('findMap' === $repositoryMethod && \is_a($object, Quest::class)) {
+            $object->map = $element;
+        } elseif ('findQuestType' === $repositoryMethod && \is_a($object, Quest::class)) {
             $object->type = $element;
         }
     }
