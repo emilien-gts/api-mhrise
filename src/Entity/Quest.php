@@ -48,4 +48,11 @@ class Quest
     {
         $this->targets = new ArrayCollection();
     }
+
+    public function addTarget(Monster $monster): void
+    {
+        if (!$this->targets->contains($monster)) {
+            $this->targets->add($monster);
+        }
+    }
 }

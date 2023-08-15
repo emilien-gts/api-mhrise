@@ -43,4 +43,11 @@ class Item
     {
         $this->linkMonsters = new ArrayCollection();
     }
+
+    public function addLinkMonster(Monster $monster): void
+    {
+        if (!$this->linkMonsters->contains($monster)) {
+            $this->linkMonsters->add($monster);
+        }
+    }
 }

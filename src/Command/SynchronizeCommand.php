@@ -25,7 +25,7 @@ class SynchronizeCommand extends Command
         parent::__construct(self::COMMAND_NAME);
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $output->setVerbosity(OutputInterface::VERBOSITY_DEBUG);
     }
