@@ -2,9 +2,13 @@
 
 namespace App\Command;
 
+use App\Synchronizer\DecorationSynchronizer;
 use App\Synchronizer\ItemSynchronizer;
 use App\Synchronizer\MonsterSynchronizer;
 use App\Synchronizer\QuestSynchronizer;
+use pcrov\JsonReader\Exception;
+use pcrov\JsonReader\InputStream\IOException;
+use pcrov\JsonReader\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,7 +24,8 @@ class SynchronizeCommand extends Command
         private readonly LoggerInterface $logger,
         private readonly MonsterSynchronizer $monsterSynchronizer,
         private readonly QuestSynchronizer $questSynchronizer,
-        private readonly ItemSynchronizer $itemSynchronizer
+        private readonly ItemSynchronizer $itemSynchronizer,
+        private readonly DecorationSynchronizer $decorationSynchronizer
     ) {
         parent::__construct(self::COMMAND_NAME);
     }
@@ -33,14 +38,7 @@ class SynchronizeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $this->logger->notice('>>> Import monsters');
-            $this->monsterSynchronizer->sync();
-
-            $this->logger->notice('>>> Import quests');
-            $this->questSynchronizer->sync();
-
-            $this->logger->notice('>>> Import items');
-            $this->itemSynchronizer->sync();
+            $this->sync();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
 
@@ -48,5 +46,25 @@ class SynchronizeCommand extends Command
         }
 
         return 1;
+    }
+
+    /**
+     * @throws IOException
+     * @throws Exception
+     * @throws InvalidArgumentException
+     */
+    private function sync(): void
+    {
+        $this->logger->notice('>>> Import monsters');
+        $this->monsterSynchronizer->sync();
+
+        $this->logger->notice('>>> Import quests');
+        $this->questSynchronizer->sync();
+
+        $this->logger->notice('>>> Import items');
+        $this->itemSynchronizer->sync();
+
+        $this->logger->notice('>>> Import decorations');
+        $this->decorationSynchronizer->sync();
     }
 }

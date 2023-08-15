@@ -2,18 +2,21 @@
 
 namespace App\Entity;
 
+use App\Entity\Decoration\DecorationMaterial;
 use App\Model\IdTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity]
+#[UniqueEntity(fields: ['name'])]
 class Item
 {
     use IdTrait;
 
-    #[ORM\Column(type: Types::STRING)]
+    #[ORM\Column(type: Types::STRING, unique: true)]
     public ?string $name = null;
 
     #[ORM\ManyToOne(targetEntity: Referential::class, cascade: ['PERSIST'])]
@@ -39,6 +42,9 @@ class Item
     #[ORM\JoinTable(name: 'item_link_monster')]
     public Collection $linkMonsters;
 
+    #[ORM\OneToMany(mappedBy: 'material', targetEntity: DecorationMaterial::class)]
+    public Collection $decorations;
+
     public function __construct()
     {
         $this->linkMonsters = new ArrayCollection();
@@ -48,6 +54,22 @@ class Item
     {
         if (!$this->linkMonsters->contains($monster)) {
             $this->linkMonsters->add($monster);
+        }
+    }
+
+    public function addDecoration(DecorationMaterial $decoration): void
+    {
+        if (!$this->decorations->contains($decoration)) {
+            $this->decorations->add($decoration);
+            $decoration->material = $this;
+        }
+    }
+
+    public function removeDecoration(DecorationMaterial $decoration): void
+    {
+        if ($this->decorations->contains($decoration)) {
+            $this->decorations->removeElement($decoration);
+            $decoration->material = null;
         }
     }
 }
