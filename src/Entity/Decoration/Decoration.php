@@ -24,9 +24,13 @@ class Decoration
     #[ORM\OneToMany(mappedBy: 'decoration', targetEntity: DecorationMaterial::class, cascade: ['ALL'])]
     public Collection $materials;
 
+    #[ORM\OneToMany(mappedBy: 'decoration', targetEntity: DecorationSkill::class, cascade: ['ALL'])]
+    public Collection $skills;
+
     public function __construct()
     {
         $this->materials = new ArrayCollection();
+        $this->skills = new ArrayCollection();
     }
 
     public function addMaterial(DecorationMaterial $material): void
@@ -42,6 +46,22 @@ class Decoration
         if ($this->materials->contains($material)) {
             $this->materials->removeElement($material);
             $material->decoration = null;
+        }
+    }
+
+    public function addSkill(DecorationSkill $skill): void
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+            $skill->decoration = $this;
+        }
+    }
+
+    public function removeSkill(DecorationSkill $skill): void
+    {
+        if ($this->skills->contains($skill)) {
+            $this->skills->removeElement($skill);
+            $skill->decoration = null;
         }
     }
 }

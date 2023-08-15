@@ -4,7 +4,9 @@ namespace App\Synchronizer;
 
 use App\Entity\Decoration\Decoration;
 use App\Entity\Decoration\DecorationMaterial;
+use App\Entity\Decoration\DecorationSkill;
 use App\Entity\Item;
+use App\Entity\Skill;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\InputStream\IOException;
 use pcrov\JsonReader\InvalidArgumentException;
@@ -15,6 +17,9 @@ class DecorationSynchronizer extends AbstractSynchronizer
 
     /** @var array<string, Item> */
     public array $_items = [];
+
+    /** @var array<string, Skill> */
+    public array $_skills = [];
 
     /**
      * @throws IOException
@@ -48,6 +53,10 @@ class DecorationSynchronizer extends AbstractSynchronizer
             $this->syncDecorationMaterials($data['materials'], $d);
         }
 
+        if (isset($data['skills'])) {
+            $this->syncDecorationSkills($data['skills'], $d);
+        }
+
         $this->em->persist($d);
     }
 
@@ -76,5 +85,32 @@ class DecorationSynchronizer extends AbstractSynchronizer
         }
 
         return $item;
+    }
+
+    private function syncDecorationSkills(array $skills, Decoration $d): void
+    {
+        foreach ($skills as $skill) {
+            $s = $this->findDecorationSkill($skill['skill']['name']);
+            if (null === $s) {
+                continue;
+            }
+
+            $ds = new DecorationSkill();
+            $ds->description = $skill['description'] ?? null;
+
+            $d->addSkill($ds);
+            $s->addDecoration($ds);
+        }
+    }
+
+    private function findDecorationSkill(string $skillName): ?Skill
+    {
+        $skill = $this->_skills[$skillName] ?? null;
+        $skill = $skill ?? $this->em->getRepository(Skill::class)->findOneBy(['name' => $skillName]);
+        if (!isset($this->_skills[$skillName]) && $skill) {
+            $this->_skills[$skillName] = $skill;
+        }
+
+        return $skill;
     }
 }

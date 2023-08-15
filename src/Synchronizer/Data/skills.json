@@ -918,16 +918,6 @@
             "lv3": "Thunder and dragon attack +15%",
             "lv4": "Also increases level of other skills by +1.",
             "lv5": "Also increases level of other skills by +1 (stacks with previous bonus)."
-        },
-        {
-            "name": "Stormsoul",
-            "id": "1799202469",
-            "description": "Strengthens thunder and dragon power and improves skills of the same elements.",
-            "lv1": "Thunder and dragon attack +5%",
-            "lv2": "Thunder and dragon attack +10%",
-            "lv3": "Thunder and dragon attack +15%",
-            "lv4": "Also increases level of other skills by +1.",
-            "lv5": "Also increases level of other skills by +1 (stacks with previous bonus)."
         }
     ]
 }
