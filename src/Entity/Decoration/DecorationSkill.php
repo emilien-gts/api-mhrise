@@ -2,14 +2,12 @@
 
 namespace App\Entity\Decoration;
 
-use App\Entity\Skill;
+use App\Entity\Skill\Skill;
 use App\Model\IdTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity]
-#[UniqueEntity(fields: ['decoration', 'skill'])]
 class DecorationSkill
 {
     use IdTrait;

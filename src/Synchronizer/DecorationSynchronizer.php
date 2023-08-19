@@ -6,20 +6,21 @@ use App\Entity\Decoration\Decoration;
 use App\Entity\Decoration\DecorationMaterial;
 use App\Entity\Decoration\DecorationSkill;
 use App\Entity\Item;
-use App\Entity\Skill;
+use App\Synchronizer\Model\FindItemTrait;
+use App\Synchronizer\Model\FindSkillTrait;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\InputStream\IOException;
 use pcrov\JsonReader\InvalidArgumentException;
 
 class DecorationSynchronizer extends AbstractSynchronizer
 {
+    use FindSkillTrait;
+    use FindItemTrait;
+
     public const JSON_NAME = 'decorations.json';
 
     /** @var array<string, Item> */
     public array $_items = [];
-
-    /** @var array<string, Skill> */
-    public array $_skills = [];
 
     /**
      * @throws IOException
@@ -63,7 +64,7 @@ class DecorationSynchronizer extends AbstractSynchronizer
     private function syncDecorationMaterials(array $materials, Decoration $d): void
     {
         foreach ($materials as $material) {
-            $i = $this->findDecorationMaterial($material['item']['name']);
+            $i = $this->findItem($material['item']['name']);
             if (null === $i) {
                 continue;
             }
@@ -76,21 +77,10 @@ class DecorationSynchronizer extends AbstractSynchronizer
         }
     }
 
-    private function findDecorationMaterial(string $materialName): ?Item
-    {
-        $item = $this->_items[$materialName] ?? null;
-        $item = $item ?? $this->em->getRepository(Item::class)->findOneBy(['name' => $materialName]);
-        if (!isset($this->_items[$materialName]) && $item) {
-            $this->_items[$materialName] = $item;
-        }
-
-        return $item;
-    }
-
     private function syncDecorationSkills(array $skills, Decoration $d): void
     {
         foreach ($skills as $skill) {
-            $s = $this->findDecorationSkill($skill['skill']['name']);
+            $s = $this->findSkill($skill['skill']['name']);
             if (null === $s) {
                 continue;
             }
@@ -101,16 +91,5 @@ class DecorationSynchronizer extends AbstractSynchronizer
             $d->addSkill($ds);
             $s->addDecoration($ds);
         }
-    }
-
-    private function findDecorationSkill(string $skillName): ?Skill
-    {
-        $skill = $this->_skills[$skillName] ?? null;
-        $skill = $skill ?? $this->em->getRepository(Skill::class)->findOneBy(['name' => $skillName]);
-        if (!isset($this->_skills[$skillName]) && $skill) {
-            $this->_skills[$skillName] = $skill;
-        }
-
-        return $skill;
     }
 }

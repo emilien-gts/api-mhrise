@@ -80,7 +80,7 @@ class Weapon
         }
     }
 
-    public function removeForgingMaterial(WeaponMaterial $weaponMaterial): void
+    public function removeMaterial(WeaponMaterial $weaponMaterial): void
     {
         if ($this->materials->contains($weaponMaterial)) {
             $this->materials->removeElement($weaponMaterial);

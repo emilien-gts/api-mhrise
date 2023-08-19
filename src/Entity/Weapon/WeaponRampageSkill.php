@@ -2,7 +2,7 @@
 
 namespace App\Entity\Weapon;
 
-use App\Entity\Skill;
+use App\Entity\Skill\SkillVariant;
 use App\Model\IdTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,8 +17,8 @@ class WeaponRampageSkill
     #[ORM\ManyToOne(targetEntity: Weapon::class, cascade: ['PERSIST'], inversedBy: 'rampageSkills')]
     public ?Weapon $weapon = null;
 
-    #[ORM\ManyToOne(targetEntity: Skill::class)]
-    public ?Skill $skill = null;
+    #[ORM\ManyToOne(targetEntity: SkillVariant::class)]
+    public ?SkillVariant $skill = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     public ?int $nbSlots = null;

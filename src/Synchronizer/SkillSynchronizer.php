@@ -2,7 +2,9 @@
 
 namespace App\Synchronizer;
 
-use App\Entity\Skill;
+use App\Entity\Skill\Skill;
+use App\Entity\Skill\SkillVariant;
+use App\Utils;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\InputStream\IOException;
 use pcrov\JsonReader\InvalidArgumentException;
@@ -35,18 +37,23 @@ class SkillSynchronizer extends AbstractSynchronizer
 
     private function syncSkill(array $data): void
     {
+        $s = new Skill();
+        $s->name = $data['name'];
+        $s->description = $data['description'] ?? null;
+
         for ($i = 1; $i <= 7; ++$i) {
             $key = \sprintf('lv%d', $i);
             if (!isset($data[$key])) {
                 continue;
             }
 
-            $s = new Skill();
-            $s->name = \sprintf('%s %s', $data['name'], SynchronizerUtils::convert_to_roman($i));
-            $s->description = $data['description'] ?? null;
-            $s->effect = $data[$key];
+            $name = \sprintf('%s %s', $data['name'], Utils::convert_to_roman($i));
+            $sv = new SkillVariant($name);
+            $sv->effect = $data[$key];
 
-            $this->em->persist($s);
+            $s->addVariant($sv);
         }
+
+        $this->em->persist($s);
     }
 }

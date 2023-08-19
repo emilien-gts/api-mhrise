@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Skill;
 
 use App\Entity\Decoration\DecorationSkill;
 use App\Model\IdTrait;
@@ -22,14 +22,15 @@ class Skill
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     public ?string $description = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    public ?string $effect = null;
+    #[ORM\OneToMany(mappedBy: 'skill', targetEntity: SkillVariant::class, cascade: ['ALL'])]
+    public Collection $variants;
 
     #[ORM\OneToMany(mappedBy: 'skill', targetEntity: DecorationSkill::class)]
     public Collection $decorations;
 
     public function __construct()
     {
+        $this->variants = new ArrayCollection();
         $this->decorations = new ArrayCollection();
     }
 
@@ -46,6 +47,22 @@ class Skill
         if ($this->decorations->contains($decoration)) {
             $this->decorations->removeElement($decoration);
             $decoration->skill = null;
+        }
+    }
+
+    public function addVariant(SkillVariant $variant): void
+    {
+        if (!$this->variants->contains($variant)) {
+            $this->variants->add($variant);
+            $variant->skill = $this;
+        }
+    }
+
+    public function removeVariant(SkillVariant $variant): void
+    {
+        if ($this->variants->contains($variant)) {
+            $this->variants->removeElement($variant);
+            $variant->skill = null;
         }
     }
 }

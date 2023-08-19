@@ -2,25 +2,22 @@
 
 namespace App\Synchronizer;
 
-use App\Entity\Item;
-use App\Entity\Skill;
 use App\Entity\Weapon\Weapon;
 use App\Entity\Weapon\WeaponMaterial;
 use App\Entity\Weapon\WeaponRampageSkill;
-use App\Enum\WeaponMaterialTypeEnum;
+use App\Enum\MaterialTypeEnum;
+use App\Synchronizer\Model\FindItemTrait;
+use App\Synchronizer\Model\FindSkillTrait;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\InputStream\IOException;
 use pcrov\JsonReader\InvalidArgumentException;
 
 class WeaponSynchronizer extends AbstractSynchronizer
 {
+    use FindItemTrait;
+    use FindSkillTrait;
+
     public const JSON_NAME = 'weapons.json';
-
-    /** @var array<string, Skill> */
-    public array $_skills = [];
-
-    /** @var array<string, Item> */
-    public array $_items = [];
 
     /**
      * @throws IOException
@@ -82,11 +79,11 @@ class WeaponSynchronizer extends AbstractSynchronizer
         }
 
         if (\array_key_exists('forging_materials', $data)) {
-            $this->syncMaterials($data['forging_materials'], $w, WeaponMaterialTypeEnum::FORGING_MATERIAL);
+            $this->syncMaterials($data['forging_materials'], $w, MaterialTypeEnum::FORGING_MATERIAL);
         }
 
         if (\array_key_exists('upgrade_materials', $data)) {
-            $this->syncMaterials($data['upgrade_materials'], $w, WeaponMaterialTypeEnum::UPGRADE_MATERIAL);
+            $this->syncMaterials($data['upgrade_materials'], $w, MaterialTypeEnum::UPGRADE_MATERIAL);
         }
 
         $this->em->persist($w);
@@ -95,7 +92,7 @@ class WeaponSynchronizer extends AbstractSynchronizer
     private function syncRampageSkills(array $rampageSkills, Weapon $w): void
     {
         foreach ($rampageSkills as $rampageSkill) {
-            $s = $this->findSkill($rampageSkill['skill']['name']);
+            $s = $this->findSkillVariant($rampageSkill['skill']['name']);
             if (null === $s) {
                 continue;
             }
@@ -109,7 +106,7 @@ class WeaponSynchronizer extends AbstractSynchronizer
         }
     }
 
-    private function syncMaterials(array $materials, Weapon $w, WeaponMaterialTypeEnum $type): void
+    private function syncMaterials(array $materials, Weapon $w, MaterialTypeEnum $type): void
     {
         foreach ($materials as $material) {
             $i = $this->findItem($material['item']['name']);
@@ -124,27 +121,5 @@ class WeaponSynchronizer extends AbstractSynchronizer
             $m->item = $i;
             $w->addMaterial($m);
         }
-    }
-
-    private function findSkill(string $skillName): ?Skill
-    {
-        $skill = $this->_skills[$skillName] ?? null;
-        $skill = $skill ?? $this->em->getRepository(Skill::class)->findOneBy(['name' => $skillName]);
-        if (!isset($this->_skills[$skillName]) && $skill) {
-            $this->_skills[$skillName] = $skill;
-        }
-
-        return $skill;
-    }
-
-    private function findItem(string $itemName): ?Item
-    {
-        $item = $this->_items[$itemName] ?? null;
-        $item = $item ?? $this->em->getRepository(Item::class)->findOneBy(['name' => $itemName]);
-        if (!isset($this->_items[$itemName]) && $item) {
-            $this->_items[$itemName] = $item;
-        }
-
-        return $item;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Weapon;
+namespace App\Entity\Armor;
 
 use App\Entity\Item;
 use App\Enum\MaterialTypeEnum;
@@ -9,12 +9,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-class WeaponMaterial
+class ArmorMaterial
 {
     use IdTrait;
 
-    #[ORM\ManyToOne(targetEntity: Weapon::class, cascade: ['PERSIST'], inversedBy: 'materials')]
-    public ?Weapon $weapon = null;
+    #[ORM\ManyToOne(targetEntity: Armor::class, cascade: ['PERSIST'], inversedBy: 'materials')]
+    public ?Armor $armor = null;
 
     #[ORM\ManyToOne(targetEntity: Item::class)]
     public ?Item $item = null;

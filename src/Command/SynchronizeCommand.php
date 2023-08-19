@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Synchronizer\ArmorSynchronizer;
 use App\Synchronizer\DecorationSynchronizer;
 use App\Synchronizer\ItemSynchronizer;
 use App\Synchronizer\MonsterSynchronizer;
@@ -29,7 +30,8 @@ class SynchronizeCommand extends Command
         private readonly ItemSynchronizer $itemSynchronizer,
         private readonly SkillSynchronizer $skillSynchronizer,
         private readonly DecorationSynchronizer $decorationSynchronizer,
-        private readonly WeaponSynchronizer $weaponSynchronizer
+        private readonly WeaponSynchronizer $weaponSynchronizer,
+        private readonly ArmorSynchronizer $armorSynchronizer
     ) {
         parent::__construct(self::COMMAND_NAME);
     }
@@ -59,22 +61,25 @@ class SynchronizeCommand extends Command
      */
     private function sync(): void
     {
-        $this->logger->notice('>>> Import monsters');
+        $this->logger->notice('>>> Import monsters...');
         $this->monsterSynchronizer->sync();
 
-        $this->logger->notice('>>> Import quests');
+        $this->logger->notice('>>> Import quests...');
         $this->questSynchronizer->sync();
 
-        $this->logger->notice('>>> Import items');
+        $this->logger->notice('>>> Import items...');
         $this->itemSynchronizer->sync();
 
-        $this->logger->notice('>>> Import skills');
+        $this->logger->notice('>>> Import skills...');
         $this->skillSynchronizer->sync();
 
-        $this->logger->notice('>>> Import decorations');
+        $this->logger->notice('>>> Import decorations...');
         $this->decorationSynchronizer->sync();
 
-        $this->logger->notice('>>> Import weapons');
+        $this->logger->notice('>>> Import weapons...');
         $this->weaponSynchronizer->sync();
+
+        $this->logger->notice('>>> Import armors...');
+        $this->armorSynchronizer->sync();
     }
 }
