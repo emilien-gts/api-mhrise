@@ -17,7 +17,7 @@ class Item
     use IdTrait;
 
     #[ORM\Column(type: Types::STRING, unique: true)]
-    public ?string $name = null;
+    public string $name;
 
     #[ORM\ManyToOne(targetEntity: Referential::class, cascade: ['PERSIST'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
@@ -45,8 +45,10 @@ class Item
     #[ORM\OneToMany(mappedBy: 'material', targetEntity: DecorationMaterial::class)]
     public Collection $decorations;
 
-    public function __construct()
+    public function __construct(string $name)
     {
+        $this->name = $name;
+
         $this->linkMonsters = new ArrayCollection();
     }
 

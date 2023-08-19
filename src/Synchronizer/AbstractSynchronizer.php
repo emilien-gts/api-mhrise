@@ -63,10 +63,10 @@ abstract class AbstractSynchronizer
             $this->_referentials[$item] = $element;
         }
 
-        if ('findAilment' === $repositoryMethod && \is_a($object, Monster::class)) {
-            $object->ailments->add($element);
-        } elseif ('findElement' === $repositoryMethod && \is_a($object, Monster::class)) {
+        if ('findElement' === $repositoryMethod && \is_a($object, Monster::class)) {
             $object->elements->add($element);
+        } elseif ('findAilment' === $repositoryMethod && \is_a($object, Monster::class)) {
+            $object->ailments->add($element);
         } elseif ('findWeakness' === $repositoryMethod && \is_a($object, Monster::class)) {
             $object->weakness->add($element);
         } elseif ('findMonsterType' === $repositoryMethod && \is_a($object, Monster::class)) {

@@ -7,14 +7,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity]
+#[UniqueEntity(fields: ['name'])]
 class Monster
 {
     use IdTrait;
 
-    #[ORM\Column(type: Types::STRING)]
-    public ?string $name = null;
+    #[ORM\Column(type: Types::STRING, unique: true)]
+    public string $name;
 
     #[ORM\ManyToOne(targetEntity: Referential::class, cascade: ['PERSIST'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
@@ -60,8 +62,10 @@ class Monster
     #[ORM\OneToMany(mappedBy: 'mainSpecie', targetEntity: Monster::class, cascade: ['PERSIST'])]
     public Collection $subSpecies;
 
-    public function __construct()
+    public function __construct(string $name)
     {
+        $this->name = $name;
+
         $this->elements = new ArrayCollection();
         $this->ailments = new ArrayCollection();
         $this->weakness = new ArrayCollection();

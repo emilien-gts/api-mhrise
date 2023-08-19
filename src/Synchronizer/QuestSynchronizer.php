@@ -20,8 +20,10 @@ class QuestSynchronizer extends AbstractSynchronizer
     public function sync(): void
     {
         $this->helper->cleanEntity(Quest::class);
+        $this->openJson(self::JSON_NAME, 'quests');
 
         $this->syncQuests();
+
         $this->saveAndclose();
     }
 
@@ -32,7 +34,6 @@ class QuestSynchronizer extends AbstractSynchronizer
      */
     private function syncQuests(): void
     {
-        $this->openJson(self::JSON_NAME, 'quests');
         $depth = $this->reader->depth();
         $this->reader->read();
 
@@ -52,12 +53,11 @@ class QuestSynchronizer extends AbstractSynchronizer
 
     private function syncQuest(array $data): void
     {
-        $q = new Quest();
-        $q->name = $data['name'];
-        $q->description = $data['description'] ?? null;
+        $q = new Quest($data['name']);
+        $q->description = SynchronizerUtils::array_value_as_string($data, 'description');
         $q->isKey = $data['isKey'] ?? null;
         $q->objective = $data['objective'] ?? null;
-        $q->difficulty = isset($data['difficulty']) ? (int) $data['difficulty'] : null;
+        $q->difficulty = SynchronizerUtils::array_value_as_int($data, 'difficulty');
 
         $this->syncReferentialItem($data['client'] ?? [], $q, 'findQuestClient', 'createQuestClient');
         $this->syncReferentialItem($data['map'] ?? [], $q, 'findMap', 'createMap');

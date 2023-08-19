@@ -15,14 +15,24 @@ class SkillSynchronizer extends AbstractSynchronizer
 
     /**
      * @throws IOException
-     * @throws Exception
      * @throws InvalidArgumentException
+     * @throws Exception
      */
     public function sync(): void
     {
         $this->helper->cleanEntity(Skill::class);
         $this->openJson(self::JSON_NAME, 'data');
 
+        $this->syncSkills();
+
+        $this->saveAndClose();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function syncSkills(): void
+    {
         $depth = $this->reader->depth();
         $this->reader->read();
 
@@ -31,8 +41,6 @@ class SkillSynchronizer extends AbstractSynchronizer
             $data = $this->reader->value();
             $this->syncSkill($data);
         } while ($this->reader->next() && $this->reader->depth() > $depth);
-
-        $this->saveAndClose();
     }
 
     private function syncSkill(array $data): void
@@ -47,6 +55,7 @@ class SkillSynchronizer extends AbstractSynchronizer
                 continue;
             }
 
+            // Variant
             $name = \sprintf('%s %s', $data['name'], Utils::convert_to_roman($i));
             $sv = new SkillVariant($name);
             $sv->effect = $data[$key];

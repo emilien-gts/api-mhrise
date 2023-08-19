@@ -27,8 +27,10 @@ class Decoration
     #[ORM\OneToMany(mappedBy: 'decoration', targetEntity: DecorationSkill::class, cascade: ['ALL'])]
     public Collection $skills;
 
-    public function __construct()
+    public function __construct(string $name)
     {
+        $this->name = $name;
+
         $this->materials = new ArrayCollection();
         $this->skills = new ArrayCollection();
     }

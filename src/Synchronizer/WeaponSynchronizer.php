@@ -18,6 +18,7 @@ class WeaponSynchronizer extends AbstractSynchronizer
     use FindSkillTrait;
 
     public const JSON_NAME = 'weapons.json';
+    public const WEAPONS_TYPES = ['Great Sword', 'Sword & Shield', 'Dual Blades', 'Long Sword', 'Hammer', 'Hunting Horn', 'Lance', 'Gunlance', 'Switch Axe', 'Charge Blade', 'Insect Glaive', 'Bow', 'Heavy Bowgun', 'Light Bowgun'];
 
     /**
      * @throws IOException
@@ -26,10 +27,22 @@ class WeaponSynchronizer extends AbstractSynchronizer
      */
     public function sync(): void
     {
+        $this->openJson(self::JSON_NAME, 'data');
+
         $this->syncWeaponsTypes();
         $this->syncWeapons();
 
         $this->saveAndClose();
+    }
+
+    private function syncWeaponsTypes(): void
+    {
+        foreach (self::WEAPONS_TYPES as $value => $libelle) {
+            $type = $this->referentialFactory->createWeaponType($libelle, $value);
+            $this->em->persist($type);
+        }
+
+        $this->em->flush();
     }
 
     /**
@@ -39,7 +52,6 @@ class WeaponSynchronizer extends AbstractSynchronizer
      */
     private function syncWeapons(): void
     {
-        $this->openJson(self::JSON_NAME, 'data');
         $depth = $this->reader->depth();
         $this->reader->read();
 
@@ -50,29 +62,17 @@ class WeaponSynchronizer extends AbstractSynchronizer
         } while ($this->reader->next() && $this->reader->depth() > $depth);
     }
 
-    private function syncWeaponsTypes(): void
-    {
-        $types = ['Great Sword', 'Sword & Shield', 'Dual Blades', 'Long Sword', 'Hammer', 'Hunting Horn', 'Lance', 'Gunlance', 'Switch Axe', 'Charge Blade', 'Insect Glaive', 'Bow', 'Heavy Bowgun', 'Light Bowgun'];
-        foreach ($types as $value => $libelle) {
-            $type = $this->referentialFactory->createWeaponType($libelle, $value);
-            $this->em->persist($type);
-        }
-
-        $this->em->flush();
-    }
-
     private function syncWeapon(array $data): void
     {
-        $w = new Weapon();
-        $w->name = $data['name'];
+        $w = new Weapon($data['name']);
         $w->type = isset($data['weapon_type']) ? $this->referentialRepository->findOneWeaponTypeByValue((int) $data['weapon_type']) : null;
         $w->description = $data['description'] ?? null;
-        $w->rarity = isset($data['rareType']) ? (int) $data['rareType'] : null;
-        $w->baseValue = isset($data['baseVal']) ? (int) $data['baseVal'] : null;
-        $w->buyValue = isset($data['buyVal']) ? (int) $data['buyVal'] : null;
-        $w->attackValue = isset($data['atk']) ? (int) $data['atk'] : null;
-        $w->criticalRate = isset($data['criticalRate']) ? (int) $data['criticalRate'] : null;
-        $w->defenseBonus = isset($data['defBonus']) ? (int) $data['defBonus'] : null;
+        $w->rarity = SynchronizerUtils::array_value_as_int($data, 'rare');
+        $w->baseValue = SynchronizerUtils::array_value_as_int($data, 'baseVal');
+        $w->buyValue = SynchronizerUtils::array_value_as_int($data, 'buyVal');
+        $w->attackValue = SynchronizerUtils::array_value_as_int($data, 'atk');
+        $w->criticalRate = SynchronizerUtils::array_value_as_int($data, 'criticalRate');
+        $w->defenseBonus = SynchronizerUtils::array_value_as_int($data, 'defBonus');
 
         if (\array_key_exists('rampage_skills', $data)) {
             $this->syncRampageSkills($data['rampage_skills'], $w);
@@ -98,8 +98,8 @@ class WeaponSynchronizer extends AbstractSynchronizer
             }
 
             $rs = new WeaponRampageSkill();
-            $rs->nbSlots = isset($rampageSkill['rampage_slots']) ? (int) $rampageSkill['rampage_slots'] : null;
-            $rs->description = $rampageSkill['description'];
+            $rs->nbSlots = SynchronizerUtils::array_value_as_int($rampageSkills, 'rampage_slots');
+            $rs->description = $rampageSkill['description'] ?? null;
 
             $rs->skill = $s;
             $w->addRampageSkill($rs);
@@ -115,7 +115,7 @@ class WeaponSynchronizer extends AbstractSynchronizer
             }
 
             $m = new WeaponMaterial();
-            $m->amount = isset($material['amount']) ? (int) \str_replace('x', '', $material['amount']) : null;
+            $m->amount = SynchronizerUtils::array_amount_value_as_int($material);
             $m->type = $type;
 
             $m->item = $i;

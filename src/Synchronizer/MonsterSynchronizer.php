@@ -38,7 +38,6 @@ class MonsterSynchronizer extends AbstractSynchronizer
     public function sync(): void
     {
         $this->helper->cleanEntity(Monster::class);
-
         $this->openJson(self::JSON_NAME, 'monsters');
 
         $this->syncMainSpecies();
@@ -66,20 +65,26 @@ class MonsterSynchronizer extends AbstractSynchronizer
 
     private function supportsMonster(array $data): bool
     {
-        $isMhRiseMonster = !empty(\array_filter($data['games'] ?? [], fn (array $data) => isset($data['game']) && self::MHRISE_GAME_NAME === $data['game']));
+        return isset($data['name']) && !empty($this->getRiseData($data));
+    }
 
-        return isset($data['name']) && $isMhRiseMonster;
+    private function getRiseData(array $data): array
+    {
+        $mhRiseData = \array_values(\array_filter($data['games'] ?? [], function (array $data) {
+            return isset($data['game']) && self::MHRISE_GAME_NAME === $data['game'];
+        }));
+
+        return $mhRiseData[0] ?? [];
     }
 
     private function syncMonster(array $data): void
     {
-        $m = new Monster();
-        $m->name = $data['name'];
-        $m->isLarge = $data['isLarge'] ?? null;
-
         $mhRiseData = $this->getRiseData($data);
-        $m->description = $mhRiseData['info'] ?? null;
-        $m->dangerLevel = isset($mhRiseData['danger']) ? (int) $mhRiseData['danger'] : null;
+
+        $m = new Monster($data['name']);
+        $m->isLarge = $data['isLarge'] ?? null;
+        $m->description = SynchronizerUtils::array_value_as_string($mhRiseData, 'description');
+        $m->dangerLevel = SynchronizerUtils::array_value_as_int($mhRiseData, 'danger');
 
         $this->syncReferentialItem($data['type'], $m, 'findMonsterType', 'createMonsterType');
         $this->syncReferentialList($data['elements'] ?? [], $m, 'findElement', 'createElement');
@@ -94,13 +99,6 @@ class MonsterSynchronizer extends AbstractSynchronizer
 
         $this->_monsters[$m->name] = $m;
         $this->em->persist($m);
-    }
-
-    private function getRiseData(array $data): array
-    {
-        $mhRiseData = \array_values(\array_filter($data['games'] ?? [], fn (array $data) => isset($data['game']) && self::MHRISE_GAME_NAME === $data['game']));
-
-        return $mhRiseData[0] ?? [];
     }
 
     private function syncSubSpecies(): void

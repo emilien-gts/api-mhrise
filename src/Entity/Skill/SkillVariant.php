@@ -5,8 +5,10 @@ namespace App\Entity\Skill;
 use App\Model\IdTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity]
+#[UniqueEntity(fields: ['name'])]
 class SkillVariant
 {
     use IdTrait;

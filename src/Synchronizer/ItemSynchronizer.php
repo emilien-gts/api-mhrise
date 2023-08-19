@@ -12,6 +12,7 @@ class ItemSynchronizer extends AbstractSynchronizer
 {
     public const JSON_NAME = 'items.json';
     public const BATCH_SIZE = 2000;
+    public const MONSTER_TYPES = ['wyvern', 'bird wyvern', 'herbivore', 'fanged beast'];
 
     /** @var array<string, Monster> */
     public array $_monsters = [];
@@ -24,8 +25,9 @@ class ItemSynchronizer extends AbstractSynchronizer
     public function sync(): void
     {
         $this->helper->cleanEntity(Item::class);
-        $this->initMonsters();
+        $this->openJson(self::JSON_NAME, 'data');
 
+        $this->initMonsters();
         $this->syncItemsType();
         $this->syncItems();
 
@@ -58,7 +60,6 @@ class ItemSynchronizer extends AbstractSynchronizer
      */
     private function syncItems(): void
     {
-        $this->openJson(self::JSON_NAME, 'data');
         $depth = $this->reader->depth();
         $this->reader->read();
 
@@ -78,13 +79,12 @@ class ItemSynchronizer extends AbstractSynchronizer
 
     private function syncItem(array $data): void
     {
-        $i = new Item();
-        $i->name = $data['name'];
+        $i = new Item($data['name']);
         $i->description = $data['description'] ?? null;
         $i->type = isset($data['type']) ? $this->referentialRepository->findOneItemTypeByValue((int) $data['type']) : null;
-        $i->isSupply = isset($data['supply']) ? (bool) $data['supply'] : null;
-        $i->buyPrice = isset($data['buyPrice']) ? (int) $data['buyPrice'] : null;
-        $i->sellPrice = isset($data['sellPrice']) ? (int) $data['sellPrice'] : null;
+        $i->isSupply = SynchronizerUtils::array_value_as_bool($data, 'supply');
+        $i->buyPrice = SynchronizerUtils::array_value_as_int($data, 'buyPrice');
+        $i->sellPrice = SynchronizerUtils::array_value_as_int($data, 'sellPrice');
 
         $this->attachMonsters($i);
 
@@ -112,9 +112,8 @@ class ItemSynchronizer extends AbstractSynchronizer
     private function attachMonstersByType(Item $i): void
     {
         $search = \trim(\strtolower($i->name ?? ''));
-        $types = ['wyvern', 'bird wyvern', 'herbivore', 'fanged beast'];
 
-        foreach ($types as $type) {
+        foreach (self::MONSTER_TYPES as $type) {
             $filteredMonsters = \array_filter($this->_monsters, function ($monster) use ($type, $search) {
                 $monsterType = \strtolower($monster->type?->libelle ?? '');
 

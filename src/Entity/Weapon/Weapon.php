@@ -16,8 +16,8 @@ class Weapon
 {
     use IdTrait;
 
-    #[ORM\Column(type: Types::STRING)]
-    public ?string $name = null;
+    #[ORM\Column(type: Types::STRING, unique: true)]
+    public string $name;
 
     #[ORM\ManyToOne(targetEntity: Referential::class, cascade: ['PERSIST'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
@@ -50,8 +50,10 @@ class Weapon
     #[ORM\OneToMany(mappedBy: 'weapon', targetEntity: WeaponMaterial::class, cascade: ['ALL'])]
     public Collection $materials;
 
-    public function __construct()
+    public function __construct(string $name)
     {
+        $this->name = $name;
+
         $this->rampageSkills = new ArrayCollection();
         $this->materials = new ArrayCollection();
     }

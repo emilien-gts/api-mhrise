@@ -32,6 +32,16 @@ class DecorationSynchronizer extends AbstractSynchronizer
         $this->helper->cleanEntity(Decoration::class);
         $this->openJson(self::JSON_NAME, 'data');
 
+        $this->syncDecorations();
+
+        $this->saveAndClose();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function syncDecorations(): void
+    {
         $depth = $this->reader->depth();
         $this->reader->read();
 
@@ -40,14 +50,11 @@ class DecorationSynchronizer extends AbstractSynchronizer
             $data = $this->reader->value();
             $this->syncDecoration($data);
         } while ($this->reader->next() && $this->reader->depth() > $depth);
-
-        $this->saveAndClose();
     }
 
     private function syncDecoration(array $data): void
     {
-        $d = new Decoration();
-        $d->name = $data['name'];
+        $d = new Decoration($data['name']);
         $d->description = $data['description'] ?? null;
 
         if (isset($data['materials'])) {
@@ -70,7 +77,7 @@ class DecorationSynchronizer extends AbstractSynchronizer
             }
 
             $di = new DecorationMaterial();
-            $di->amount = isset($material['amount']) ? (int) \str_replace('x', '', $material['amount']) : null;
+            $di->amount = SynchronizerUtils::array_amount_value_as_int($material);
 
             $d->addMaterial($di);
             $i->addDecoration($di);

@@ -7,14 +7,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity]
+#[UniqueEntity(fields: ['name', 'client'])]
 class Quest
 {
     use IdTrait;
 
     #[ORM\Column(type: Types::STRING)]
-    public ?string $name = null;
+    public string $name;
 
     #[ORM\ManyToOne(targetEntity: Referential::class, cascade: ['PERSIST'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
@@ -44,8 +46,10 @@ class Quest
     #[ORM\JoinTable(name: 'quest_target')]
     public Collection $targets;
 
-    public function __construct()
+    public function __construct(string $name)
     {
+        $this->name = $name;
+
         $this->targets = new ArrayCollection();
     }
 
@@ -53,6 +57,13 @@ class Quest
     {
         if (!$this->targets->contains($monster)) {
             $this->targets->add($monster);
+        }
+    }
+
+    public function removeTarget(Monster $monster): void
+    {
+        if ($this->targets->contains($monster)) {
+            $this->targets->removeElement($monster);
         }
     }
 }
