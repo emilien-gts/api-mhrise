@@ -84,6 +84,7 @@ abstract class AbstractSynchronizer
     {
         $this->em->flush();
         $this->em->clear();
+
         $this->reader->close();
     }
 }

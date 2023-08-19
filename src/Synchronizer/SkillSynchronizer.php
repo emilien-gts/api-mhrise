@@ -35,17 +35,18 @@ class SkillSynchronizer extends AbstractSynchronizer
 
     private function syncSkill(array $data): void
     {
-        $s = new Skill();
-        $s->name = $data['name'];
-        $s->description = $data['description'] ?? null;
-
         for ($i = 1; $i <= 7; ++$i) {
             $key = \sprintf('lv%d', $i);
-            if (isset($data[$key])) {
-                $s->{$key} = $data[$key];
+            if (!isset($data[$key])) {
+                continue;
             }
-        }
 
-        $this->em->persist($s);
+            $s = new Skill();
+            $s->name = \sprintf('%s %s', $data['name'], SynchronizerUtils::convert_to_roman($i));
+            $s->description = $data['description'] ?? null;
+            $s->effect = $data[$key];
+
+            $this->em->persist($s);
+        }
     }
 }

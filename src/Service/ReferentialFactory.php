@@ -44,4 +44,12 @@ class ReferentialFactory
 
         return $referential;
     }
+
+    public function createWeaponType(string $libelle, ?int $value): Referential
+    {
+        $referential = new Referential(ReferentialTypeEnum::WEAPON_TYPE, $libelle);
+        $referential->value = $value;
+
+        return $referential;
+    }
 }

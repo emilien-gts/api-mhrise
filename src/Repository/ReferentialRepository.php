@@ -63,6 +63,14 @@ class ReferentialRepository extends ServiceEntityRepository
         return $this->findOneByTypeAndLibelle(ReferentialTypeEnum::AILMENT, $libelle);
     }
 
+    public function findOneWeaponTypeByValue(int $value): ?Referential
+    {
+        return $this->findOneBy([
+            'type' => ReferentialTypeEnum::WEAPON_TYPE,
+            'value' => $value,
+        ]);
+    }
+
     public function findOneItemTypeByValue(int $value): ?Referential
     {
         return $this->findOneBy([

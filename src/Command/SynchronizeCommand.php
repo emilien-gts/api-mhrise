@@ -7,6 +7,7 @@ use App\Synchronizer\ItemSynchronizer;
 use App\Synchronizer\MonsterSynchronizer;
 use App\Synchronizer\QuestSynchronizer;
 use App\Synchronizer\SkillSynchronizer;
+use App\Synchronizer\WeaponSynchronizer;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\InputStream\IOException;
 use pcrov\JsonReader\InvalidArgumentException;
@@ -27,7 +28,8 @@ class SynchronizeCommand extends Command
         private readonly QuestSynchronizer $questSynchronizer,
         private readonly ItemSynchronizer $itemSynchronizer,
         private readonly SkillSynchronizer $skillSynchronizer,
-        private readonly DecorationSynchronizer $decorationSynchronizer
+        private readonly DecorationSynchronizer $decorationSynchronizer,
+        private readonly WeaponSynchronizer $weaponSynchronizer
     ) {
         parent::__construct(self::COMMAND_NAME);
     }
@@ -71,5 +73,8 @@ class SynchronizeCommand extends Command
 
         $this->logger->notice('>>> Import decorations');
         $this->decorationSynchronizer->sync();
+
+        $this->logger->notice('>>> Import weapons');
+        $this->weaponSynchronizer->sync();
     }
 }

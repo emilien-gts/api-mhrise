@@ -22,23 +22,8 @@ class Skill
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     public ?string $description = null;
 
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    public ?string $lv2 = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    public ?string $lv3 = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    public ?string $lv4 = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    public ?string $lv5 = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    public ?string $lv6 = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    public ?string $lv7 = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    public ?string $effect = null;
 
     #[ORM\OneToMany(mappedBy: 'skill', targetEntity: DecorationSkill::class)]
     public Collection $decorations;
