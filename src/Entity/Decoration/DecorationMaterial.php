@@ -20,9 +20,10 @@ class DecorationMaterial
     public ?Decoration $decoration = null;
 
     #[ORM\ManyToOne(targetEntity: Item::class, cascade: ['PERSIST'], inversedBy: 'decorations')]
+    #[Groups(groups: ['api:decoration:read', 'api:decoration:write'])]
     public ?Item $material = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: false)]
-    #[Groups(groups: ['api:item:read', 'api:item:write'])]
+    #[Groups(groups: ['api:decoration:read', 'api:decoration:write', 'api:item:read', 'api:item:write'])]
     public ?int $amount = null;
 }
