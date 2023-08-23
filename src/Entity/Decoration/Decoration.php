@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[UniqueEntity(fields: ['name'])]
@@ -16,9 +17,11 @@ class Decoration
     use IdTrait;
 
     #[ORM\Column(type: Types::STRING, unique: true)]
+    #[Groups(groups: ['api:item:read', 'api:item:write'])]
     public ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(groups: ['api:item:read', 'api:item:write'])]
     public ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'decoration', targetEntity: DecorationMaterial::class, cascade: ['ALL'])]
