@@ -40,29 +40,29 @@ class Item
     use IdTrait;
 
     #[ORM\Column(type: Types::STRING, unique: true)]
-    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write'])]
+    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write', 'api:weapon:read', 'api:weapon:write'])]
     public string $name;
 
     #[ORM\ManyToOne(targetEntity: Referential::class, cascade: ['PERSIST'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[ReferentialTypeConstraint(match: ReferentialTypeEnum::ITEM_TYPE, groups: ['Default', 'api:monster'])]
-    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write'])]
+    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write', 'api:weapon:read', 'api:weapon:write'])]
     public ?Referential $type = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write'])]
+    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write', 'api:weapon:read', 'api:weapon:write'])]
     public ?string $description = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write'])]
+    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write', 'api:weapon:read', 'api:weapon:write'])]
     public ?bool $isSupply = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write'])]
+    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write', 'api:weapon:read', 'api:weapon:write'])]
     public ?int $buyPrice = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write'])]
+    #[Groups(groups: ['api:item:read', 'api:item:write', 'api:decoration:read', 'api:decoration:write', 'api:weapon:read', 'api:weapon:write'])]
     public ?int $sellPrice = null;
 
     /**

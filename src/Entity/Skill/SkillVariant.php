@@ -15,14 +15,15 @@ class SkillVariant
     use IdTrait;
 
     #[ORM\Column(type: Types::STRING, unique: true)]
-    #[Groups(groups: ['api:skill:read', 'api:skill:write'])]
+    #[Groups(groups: ['api:skill:read', 'api:skill:write', 'api:weapon:read', 'api:weapon:write'])]
     public string $name;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(groups: ['api:skill:read', 'api:skill:write'])]
+    #[Groups(groups: ['api:skill:read', 'api:skill:write', 'api:weapon:read', 'api:weapon:write'])]
     public ?string $effect = null;
 
     #[ORM\ManyToOne(targetEntity: Skill::class, inversedBy: 'variants')]
+    #[Groups(groups: ['api:weapon:read', 'api:weapon:write'])]
     public ?Skill $skill = null;
 
     public function __construct(string $name)
