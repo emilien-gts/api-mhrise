@@ -42,8 +42,7 @@ class ArmorSynchronizer extends AbstractSynchronizer
 
     private function syncArmor(array $data): void
     {
-        $a = new Armor();
-        $a->name = $data['name'];
+        $a = new Armor($data['name']);
         $a->description = $data['description'] ?? null;
         $a->armorSetId = SynchronizerUtils::array_value_as_int($data, 'series');
         $a->rarity = SynchronizerUtils::array_value_as_int($data, 'rare');

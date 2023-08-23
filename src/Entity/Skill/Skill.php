@@ -38,11 +38,11 @@ class Skill
     use IdTrait;
 
     #[ORM\Column(type: Types::STRING, unique: true)]
-    #[Groups(groups: ['api:skill:read', 'api:skill:write'])]
+    #[Groups(groups: ['api:skill:read', 'api:skill:write', 'api:armor:read', 'api:armor:write'])]
     public ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(groups: ['api:skill:read', 'api:skill:write'])]
+    #[Groups(groups: ['api:skill:read', 'api:skill:write', 'api:armor:read', 'api:armor:write'])]
     public ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'skill', targetEntity: SkillVariant::class, cascade: ['ALL'])]
