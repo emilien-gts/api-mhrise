@@ -16,9 +16,11 @@ class WeaponRampageSkill
     use IdTrait;
 
     #[ORM\ManyToOne(targetEntity: Weapon::class, cascade: ['PERSIST'], inversedBy: 'rampageSkills')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     public ?Weapon $weapon = null;
 
     #[ORM\ManyToOne(targetEntity: SkillVariant::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:weapon:read', 'api:weapon:write'])]
     public ?SkillVariant $skill = null;
 

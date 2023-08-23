@@ -29,6 +29,8 @@ class DecorationSynchronizer extends AbstractSynchronizer
      */
     public function sync(): void
     {
+        $this->helper->cleanEntity(DecorationMaterial::class);
+        $this->helper->cleanEntity(DecorationSkill::class);
         $this->helper->cleanEntity(Decoration::class);
         $this->openJson(self::JSON_NAME, 'data');
 

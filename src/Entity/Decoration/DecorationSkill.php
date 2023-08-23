@@ -14,10 +14,12 @@ class DecorationSkill
     use IdTrait;
 
     #[ORM\ManyToOne(targetEntity: Decoration::class, cascade: ['PERSIST'], inversedBy: 'skills')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:skill:read', 'api:skill:write'])]
     public ?Decoration $decoration = null;
 
     #[ORM\ManyToOne(targetEntity: Skill::class, cascade: ['PERSIST'], inversedBy: 'decorations')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:decoration:read', 'api:decoration:write'])]
     public ?Skill $skill = null;
 

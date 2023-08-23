@@ -19,6 +19,7 @@ class ArmorSkill
     public ?Armor $armor = null;
 
     #[ORM\ManyToOne(targetEntity: Skill::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:armor:read', 'api:armor:write'])]
     public ?Skill $skill = null;
 

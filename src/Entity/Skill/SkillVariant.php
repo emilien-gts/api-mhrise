@@ -14,7 +14,7 @@ class SkillVariant
 {
     use IdTrait;
 
-    #[ORM\Column(type: Types::STRING, unique: true)]
+    #[ORM\Column(type: Types::STRING)]
     #[Groups(groups: ['api:skill:read', 'api:skill:write', 'api:weapon:read', 'api:weapon:write'])]
     public string $name;
 
@@ -23,6 +23,7 @@ class SkillVariant
     public ?string $effect = null;
 
     #[ORM\ManyToOne(targetEntity: Skill::class, inversedBy: 'variants')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:weapon:read', 'api:weapon:write'])]
     public ?Skill $skill = null;
 

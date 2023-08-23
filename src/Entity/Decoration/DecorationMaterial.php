@@ -16,10 +16,12 @@ class DecorationMaterial
     use IdTrait;
 
     #[ORM\ManyToOne(targetEntity: Decoration::class, cascade: ['PERSIST'], inversedBy: 'materials')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:item:read', 'api:item:write'])]
     public ?Decoration $decoration = null;
 
     #[ORM\ManyToOne(targetEntity: Item::class, cascade: ['PERSIST'], inversedBy: 'decorations')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:decoration:read', 'api:decoration:write'])]
     public ?Item $material = null;
 

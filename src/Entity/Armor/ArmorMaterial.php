@@ -18,6 +18,7 @@ class ArmorMaterial
     public ?Armor $armor = null;
 
     #[ORM\ManyToOne(targetEntity: Item::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:armor:read', 'api:armor:write'])]
     public ?Item $item = null;
 

@@ -49,7 +49,7 @@ class Skill
     #[Groups(groups: ['api:skill:read', 'api:skill:write'])]
     public Collection $variants;
 
-    #[ORM\OneToMany(mappedBy: 'skill', targetEntity: DecorationSkill::class)]
+    #[ORM\OneToMany(mappedBy: 'skill', targetEntity: DecorationSkill::class, cascade: ['ALL'])]
     #[Groups(groups: ['api:skill:read', 'api:skill:write'])]
     public Collection $decorations;
 

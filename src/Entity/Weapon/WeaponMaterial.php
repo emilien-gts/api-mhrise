@@ -15,9 +15,11 @@ class WeaponMaterial
     use IdTrait;
 
     #[ORM\ManyToOne(targetEntity: Weapon::class, cascade: ['PERSIST'], inversedBy: 'materials')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     public ?Weapon $weapon = null;
 
     #[ORM\ManyToOne(targetEntity: Item::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     #[Groups(groups: ['api:weapon:read', 'api:weapon:write'])]
     public ?Item $item = null;
 

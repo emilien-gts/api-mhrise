@@ -20,6 +20,7 @@ class SkillSynchronizer extends AbstractSynchronizer
      */
     public function sync(): void
     {
+        $this->helper->cleanEntity(SkillVariant::class);
         $this->helper->cleanEntity(Skill::class);
         $this->openJson(self::JSON_NAME, 'data');
 

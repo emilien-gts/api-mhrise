@@ -27,6 +27,9 @@ class WeaponSynchronizer extends AbstractSynchronizer
      */
     public function sync(): void
     {
+        $this->helper->cleanEntity(WeaponMaterial::class);
+        $this->helper->cleanEntity(WeaponRampageSkill::class);
+        $this->helper->cleanEntity(Weapon::class);
         $this->openJson(self::JSON_NAME, 'data');
 
         $this->syncWeaponsTypes();

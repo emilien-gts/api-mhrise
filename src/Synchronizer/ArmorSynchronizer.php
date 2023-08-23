@@ -27,6 +27,10 @@ class ArmorSynchronizer extends AbstractSynchronizer
      */
     public function sync(): void
     {
+        $this->helper->cleanEntity(ArmorMaterial::class);
+        $this->helper->cleanEntity(ArmorSkill::class);
+        $this->helper->cleanEntity(Armor::class);
+
         $this->openJson(self::JSON_NAME, 'data');
         $depth = $this->reader->depth();
         $this->reader->read();
