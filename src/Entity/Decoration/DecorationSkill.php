@@ -14,6 +14,7 @@ class DecorationSkill
     use IdTrait;
 
     #[ORM\ManyToOne(targetEntity: Decoration::class, cascade: ['PERSIST'], inversedBy: 'skills')]
+    #[Groups(groups: ['api:skill:read', 'api:skill:write'])]
     public ?Decoration $decoration = null;
 
     #[ORM\ManyToOne(targetEntity: Skill::class, cascade: ['PERSIST'], inversedBy: 'decorations')]
@@ -21,6 +22,6 @@ class DecorationSkill
     public ?Skill $skill = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(groups: ['api:decoration:read', 'api:decoration:write'])]
+    #[Groups(groups: ['api:decoration:read', 'api:decoration:write', 'api:skill:read', 'api:skill:write'])]
     public ?string $description = null;
 }
