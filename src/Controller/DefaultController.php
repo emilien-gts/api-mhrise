@@ -12,6 +12,6 @@ class DefaultController extends AbstractController
     #[Route('')]
     public function index(): Response
     {
-        return $this->render('default/index.html.twig');
+        return $this->redirectToRoute('api_entrypoint', status: Response::HTTP_MOVED_PERMANENTLY);
     }
 }
