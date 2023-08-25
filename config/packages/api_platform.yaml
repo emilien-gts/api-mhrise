@@ -1,0 +1,3 @@
+# api/config/packages/api_platform.yaml
+api_platform:
+  enable_swagger_ui: false
